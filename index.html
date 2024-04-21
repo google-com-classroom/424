@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html lang="en-us">
 <head>
 <meta charset="utf-8"/>
@@ -20,55 +19,53 @@
 </div>
 </div>
 <script>
-      var myGameInstance = null;
-      var player;
-      var loadingBar;
+document.addEventListener("DOMContentLoaded", function() {
+  YaGames
+    .init()
+    .then(ysdk => {
+      console.log('Yandex SDK initialized');
+      window.ysdk = ysdk;
+      ysdk
+        .getPlayer({ scopes: false })
+        .then(_player => {
+          console.log('Yandex Player initialized');
+          player = _player;
 
-      YaGames
-        .init()
-        .then(ysdk => {
-          console.log('Yandex SDK initialized');
-          window.ysdk = ysdk;
-          ysdk
-            .getPlayer({ scopes: false })
-            .then(_player => {
-              console.log('Yandex Player initialized');
-              player = _player;
+          var canvas = document.querySelector("#unity-canvas");
+          loadingBar = document.querySelector("#loading-bar");
+          var progressBarFull = document.querySelector("#progress-bar-full")
 
-              var canvas = document.querySelector("#unity-canvas");
-              loadingBar = document.querySelector("#loading-bar");
-              var progressBarFull = document.querySelector("#progress-bar-full")
+          var buildUrl = "Build";
+          var loaderUrl = buildUrl + "/FasterRuntime.loader.js";
+          var config = {
+            dataUrl: buildUrl + "/FasterRuntime.data.unityweb",
+            frameworkUrl: buildUrl + "/FasterRuntime.framework.js.unityweb",
+            codeUrl: buildUrl + "/FasterRuntime.wasm.unityweb",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "In Progress",
+            productName: "Merge Girls",
+            productVersion: "1",
+          };
 
-              var buildUrl = "Build";
-              var loaderUrl = buildUrl + "/FasterRuntime.loader.js";
-              var config = {
-                dataUrl: buildUrl + "/FasterRuntime.data.unityweb",
-                frameworkUrl: buildUrl + "/FasterRuntime.framework.js.unityweb",
-                codeUrl: buildUrl + "/FasterRuntime.wasm.unityweb",
-                streamingAssetsUrl: "StreamingAssets",
-                companyName: "In Progress",
-                productName: "Merge Girls",
-                productVersion: "1",
-              };
-
-              var script = document.createElement("script");
-              script.src = loaderUrl;
-              script.onload = () => {
-                createUnityInstance(canvas, config, (progress) => {
-                  progressBarFull.style.width = 100 * progress + "%";
-                }).then((unityInstance) => {
-                  loadingBar.style.display = "none";
-                  myGameInstance = unityInstance;
-                  setTimeout(function () {ysdk.features.LoadingAPI?.ready();}, 2200);
-                }).catch((message) => {
-                  alert(message);
-                });
-              };
-
-              document.body.appendChild(script);
-
+          var script = document.createElement("script");
+          script.src = loaderUrl;
+          script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {
+              progressBarFull.style.width = 100 * progress + "%";
+            }).then((unityInstance) => {
+              loadingBar.style.display = "none";
+              myGameInstance = unityInstance;
+              setTimeout(function () {ysdk.features.LoadingAPI?.ready();}, 2200);
+            }).catch((message) => {
+              alert(message);
             });
-          });
-    </script>
+          };
+
+          document.body.appendChild(script);
+
+        });
+    });
+});
+</script>
 </body>
 </html>
